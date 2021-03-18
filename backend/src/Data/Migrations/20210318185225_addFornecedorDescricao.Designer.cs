@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Api.Migrations
+namespace Data.Migrations
 {
     [DbContext(typeof(MyApiContext))]
-    [Migration("20210315174226_Initial")]
-    partial class Initial
+    [Migration("20210318185225_addFornecedorDescricao")]
+    partial class addFornecedorDescricao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,6 +67,9 @@ namespace Api.Migrations
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Documento")
                         .HasColumnType("nvarchar(max)");

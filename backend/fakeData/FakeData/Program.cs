@@ -2,6 +2,8 @@
 using Bogus.Extensions;
 using Bogus.Extensions.Brazil;
 using Negocios.Models;
+using RestSharp;
+using RestSharp.Authenticators;
 using System.Threading.Tasks;
 
 namespace FakeData
@@ -28,6 +30,7 @@ namespace FakeData
 
             var fornecedorFake = new Faker<Fornecedor>("pt_BR")
                 .RuleFor(x => x.Nome, x => x.Company.CompanyName())
+                .RuleFor(x => x.Descricao, x => x.Hacker.Phrase())
                 .RuleFor(x => x.Documento, x => x.Company.Cnpj())
                 .RuleFor(x => x.Endereco, x => enderecoFake)
                 .RuleFor(x => x.Produtos, (x, y) =>
@@ -39,15 +42,21 @@ namespace FakeData
                     return produtos;
                 });
 
-            var result = fornecedorFake.Generate(3);
+            var result = fornecedorFake.GenerateForever();
 
-            result.Dump();
+            var client = new RestClient("https://localhost:5001/api/");
 
-            //foreach (var fornecedor in result)
-            //{
-            //    fornecedor.Dump();
-            //    await Task.Delay(1000);
-            //}
+            //client.Authenticator = new HttpBasicAuthenticator("username", "password");
+
+            foreach (var fornecedor in result)
+            {
+                var request = new RestRequest("fornecedores", Method.POST, DataFormat.Json);
+
+                var response = client.Post(request);
+
+                fornecedor.Dump();
+                //await Task.Delay(1000);
+            }
 
 
         }

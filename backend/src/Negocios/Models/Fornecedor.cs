@@ -6,6 +6,7 @@ namespace Negocios.Models
     {
         public string Nome { get; set; }
         public string Documento { get; set; }
+        public string Descricao { get; set; }
         public TipoFornecedor TipoFornecedor { get; set; }
         public Endereco Endereco { get; set; }
         public bool Ativo { get; set; }

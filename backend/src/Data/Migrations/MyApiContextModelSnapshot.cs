@@ -66,6 +66,9 @@ namespace Data.Migrations
                     b.Property<bool>("Ativo")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Descricao")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Documento")
                         .HasColumnType("nvarchar(max)");
 

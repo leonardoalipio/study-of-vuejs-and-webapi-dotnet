@@ -64,14 +64,14 @@ namespace Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<IEnumerable<FornecedorViewModel>>> Adicionar(FornecedorViewModel model)
+        public async Task<ActionResult<bool>> Adicionar(FornecedorViewModel model)
         {
             if (!ModelState.IsValid) return BadRequest();
 
             var fornecedor = _mapper.Map<Fornecedor>(model);
-            await _fornecedorService.Adicionar(fornecedor);
+            var result = await _fornecedorService.Adicionar(fornecedor);
 
-            return Ok();
+            return result;
         }
     }
 }

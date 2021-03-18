@@ -1,12 +1,18 @@
 <template>
 	<div>
         <NavBar />
+
         <div class="container-fluid">
             <div class="row">
+
                 <SideBar />
-                <router-view></router-view>
+
+                <Content />
+
             </div>
         </div>
+
+        <Footer />
     </div>
 </template>
 

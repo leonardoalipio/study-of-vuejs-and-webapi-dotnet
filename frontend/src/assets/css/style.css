@@ -1,0 +1,16 @@
+.navbar-color-green {
+    background-color: #65c053;
+}
+
+.text-color-vue {
+    color: #2c3e50
+}
+
+a {
+    color: #2b7489;
+}
+
+a:hover {
+    color: #3a96af;
+    cursor: pointer;
+}
