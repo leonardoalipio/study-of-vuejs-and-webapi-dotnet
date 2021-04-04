@@ -7,6 +7,7 @@ namespace Negocios.Interfaces
 {
     public interface IFornecedorRepository : IRepository<Fornecedor>
     {
+        Task<Fornecedor> ObterFornecedor(Guid id);
         Task<Fornecedor> ObterFornecedorEndereco(Guid id);
         Task<Fornecedor> ObterFornecedorProdutosEndereco(Guid id);
 

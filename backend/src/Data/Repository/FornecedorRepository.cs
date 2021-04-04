@@ -15,6 +15,13 @@ namespace Data.Repository
     {
         public FornecedorRepository(MyApiContext db) : base(db) { }
 
+        public async Task<Fornecedor> ObterFornecedor(Guid id)
+        {
+            return await _Db.Fornecedores
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
         public async Task<Fornecedor> ObterFornecedorEndereco(Guid id)
         {
             return await _Db.Fornecedores

@@ -6,34 +6,30 @@
           <h3 class="mb-0">{{ TopFornecedor.nome }}</h3>
           <div class="mb-1 text-muted">Ativo: {{ TopFornecedor.ativo ? 'Sim' : 'Não' }}</div>
           <p class="card-text mb-auto">{{ TopFornecedor.descricao }}</p>
-          <a class="stretched-link" @click="abrirFornecedor(TopFornecedor)">Sobre este fornecedor</a>
+          <a class="" @click="abrirFornecedor(TopFornecedor)">Sobre este fornecedor</a>
         </div>
       </div>
     </div>
 </template>
 
 <script>
-import { Prop, Component, Vue } from 'vue-property-decorator'
+    import { Prop, Component, Vue } from 'vue-property-decorator'
 
-@Component({
-  name: 'Fornecedor'
-})
-export default class Fornecedor extends Vue {
-    
-    @Prop({ required: true }) TopFornecedor;
+    @Component({
+        name: 'Fornecedor'
+    })
+    export default class Fornecedor extends Vue {
+        
+        @Prop({ required: true }) TopFornecedor;
 
-    abrirFornecedor(fornecedor) {
-        // this.$router.push({
-        //     path: `/fornecedor/${fornecedor.id}`
-        // })
-        console.log(fornecedor)
+        abrirFornecedor(fornecedor) {
+            // this.$router.push({
+            //     path: `/fornecedor/${fornecedor.id}`
+            // })
+            console.log(fornecedor)
+        }
+        
     }
-
-    created() {
-        console.log(this.TopFornecedor)
-    }
-    
-}
 </script>
 
 <style>

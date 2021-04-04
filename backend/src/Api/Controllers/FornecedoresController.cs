@@ -11,35 +11,29 @@ namespace Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FornecedoresController : ControllerBase
+    public class FornecedoresController : MainController
     {
         private readonly IFornecedorRepository _fornecedorRepository;
+        private readonly IEnderecoRepository _enderecoRepository;
         private readonly IFornecedorService _fornecedorService;
         private readonly IMapper _mapper;
 
-        public FornecedoresController(IFornecedorRepository fornecedorRepository, 
-                                    IMapper mapper, 
-                                    IFornecedorService fornecedorService)
+        public FornecedoresController(IFornecedorRepository fornecedorRepository,
+                                    IMapper mapper,
+                                    IFornecedorService fornecedorService,
+                                    INotificador notificador, 
+                                    IEnderecoRepository enderecoRepository) : base(notificador)
         {
             _fornecedorRepository = fornecedorRepository;
             _mapper = mapper;
             _fornecedorService = fornecedorService;
+            _enderecoRepository = enderecoRepository;
         }
 
-        [HttpGet("obter-todos")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<FornecedorViewModel>>> ObterTodos()
         {
             var fornecedores = await _fornecedorRepository.ObterTodos();
-
-            var resultMap = _mapper.Map<IEnumerable<FornecedorViewModel>>(fornecedores);
-
-            return Ok(resultMap);
-        }
-
-        [HttpGet("obter-todos-fornecedores-produtos-endereco")]
-        public async Task<ActionResult<IEnumerable<FornecedorViewModel>>> ObterTodosFornecedoresProdutosEndereco()
-        {
-            var fornecedores = await _fornecedorRepository.ObterTodosFornecedoresProdutosEndereco();
 
             var resultMap = _mapper.Map<IEnumerable<FornecedorViewModel>>(fornecedores);
 
@@ -56,6 +50,36 @@ namespace Api.Controllers
             return fornecedor;
         }
 
+        [HttpGet("obter-endereco/{id:Guid}")]
+        public async Task<ActionResult<EnderecoViewModel>> EnderecoPorId(Guid id)
+        {
+            var endereco = await _enderecoRepository.ObterPorId(id);
+
+            if (endereco == null) return NotFound();
+
+            var resultMap = _mapper.Map<EnderecoViewModel>(endereco);
+
+            return resultMap;
+        }
+
+        [HttpPut("atualizar-endereco/{id:Guid}")]
+        public async Task<ActionResult<EnderecoViewModel>> AtualizarEndereco(Guid id, EnderecoViewModel enderecoViewModel)
+        {
+            if (id != enderecoViewModel.Id)
+            {
+                NotificarErro("O id informado não é o mesmo que foi passado na query");
+                return CustomResponse(enderecoViewModel);
+            }
+
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            var endereco = _mapper.Map<Endereco>(enderecoViewModel);
+
+            await _fornecedorService.AtualizarEndereco(endereco);
+
+            return CustomResponse(enderecoViewModel);
+        }
+
         private async Task<FornecedorViewModel> ObterFornecedorProdutosEndereco(Guid id)
         {
             var fornecedorProdutosEndereco = await _fornecedorRepository.ObterFornecedorProdutosEndereco(id);
@@ -63,15 +87,49 @@ namespace Api.Controllers
             return _mapper.Map<FornecedorViewModel>(fornecedorProdutosEndereco);
         }
 
+        private async Task<FornecedorViewModel> ObterFornecedorEndereco(Guid id)
+        {
+            var fornecedorProdutosEndereco = await _fornecedorRepository.ObterFornecedorEndereco(id);
+
+            return _mapper.Map<FornecedorViewModel>(fornecedorProdutosEndereco);
+        }
+
         [HttpPost]
         public async Task<ActionResult<bool>> Adicionar(FornecedorViewModel model)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
 
             var fornecedor = _mapper.Map<Fornecedor>(model);
-            var result = await _fornecedorService.Adicionar(fornecedor);
 
-            return result;
+            await _fornecedorService.Adicionar(fornecedor);
+
+            return CustomResponse(model);
+        }
+
+        [HttpPut("{id:Guid}")]
+        public async Task<ActionResult<FornecedorViewModel>> Atualizar(Guid id, FornecedorViewModel model)
+        {
+            if (id != model.Id) return BadRequest();
+
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
+            var fornecedor = _mapper.Map<Fornecedor>(model);
+
+            await _fornecedorService.Atualizar(fornecedor);
+
+            return CustomResponse(model);
+        }
+
+        [HttpDelete("{id:Guid}")]
+        public async Task<ActionResult> Excluir(Guid id)
+        {
+            var fornecedor = ObterFornecedorEndereco(id);
+
+            if (fornecedor == null) return NotFound();
+
+            await _fornecedorService.Remover(id);
+
+            return CustomResponse();
         }
     }
 }

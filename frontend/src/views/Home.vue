@@ -25,7 +25,6 @@
             <Fornecedor v-for="fornecedor in Fornecedores" 
                 :key="fornecedor.id" 
                 :TopFornecedor="fornecedor" />
-            <!-- {{Fornecedores[0]}} -->
         </div>
 
     </div>
@@ -33,30 +32,30 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+    import { Vue, Component } from 'vue-property-decorator';
 
-import FornecedorService from '@/services/fornecedorService'
+    import FornecedorService from '@/services/fornecedorService'
 
-import FornecedorModel from '@/types/Fornecedor'
+    import FornecedorModel from '@/types/Fornecedor'
 
-import AppFornecedorCard from '@/components/Fornecedor.vue'
+    import AppFornecedorCard from '@/components/Fornecedor.vue'
 
-@Component({
-    name: 'Home',
-    components: {
-        'Fornecedor': AppFornecedorCard
+    @Component({
+        name: 'Home',
+        components: {
+            'Fornecedor': AppFornecedorCard
+        }
+    })
+    export default class Home extends Vue {
+        
+        Fornecedores: FornecedorModel[] = [];
+
+        created() {
+            const fornecedorService = new FornecedorService();  
+
+            fornecedorService.getAllFornecedores()
+                .then(response => this.Fornecedores = response)
+        }
+        
     }
-})
-export default class Home extends Vue {
-    
-    Fornecedores: FornecedorModel[] = [];
-
-     created() {
-        const fornecedorService = new FornecedorService();  
-
-        fornecedorService.getAllFornecedores()
-            .then(response => this.Fornecedores = response)
-    }
-    
-}
 </script>
