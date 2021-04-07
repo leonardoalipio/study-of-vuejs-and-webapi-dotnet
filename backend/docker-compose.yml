@@ -1,18 +1,35 @@
 version: '3.4'
 
-services:
-  db:
-    image: "mcr.microsoft.com/mssql/server:2017-latest"
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=pwd&&1323
+networks: 
+    app:
 
+services:
   api:
     image: ${DOCKER_REGISTRY-}api
     build:
       context: .
       dockerfile: src/Api/Dockerfile
+    ports:
+      - 5678:443
+      - 6789:80
     depends_on:
       - db
+    networks: 
+        - app
 
-
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    volumes:
+      - ./mssql/data:/var/opt/mssql
+      # we copy our scripts onto the container
+      - ./mssql/:/usr/src/app 
+    working_dir: /usr/src/app 
+    command: sh -c ' bash ./entrypoint.sh; ./entrypoint.sh & /opt/mssql/bin/sqlservr;'
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=pwd*1323
+      - MSSQL_PID=Express
+    networks: 
+        - app

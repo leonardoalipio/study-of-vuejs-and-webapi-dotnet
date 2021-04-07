@@ -62,6 +62,11 @@ namespace Api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api v1"));
             }
 
+            using (var serviceScope = app.ApplicationServices.CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<MyApiContext>().Database.Migrate();
+            }
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
